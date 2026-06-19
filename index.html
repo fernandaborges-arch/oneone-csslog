@@ -1,1 +1,2648 @@
-file:///C:/Users/Fernanda%20-%20CSSLOG/Downloads/index_3.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1:1 Contínuo — Gerência de Operações</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1f2436;
+    --border: #2a3050;
+    --accent: #5b7fff;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --text: #e8eaf0;
+    --text-muted: #7a82a0;
+    --text-dim: #4a5278;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* LAYOUT */
+  .app { display: flex; height: 100vh; overflow: hidden; }
+
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  .sidebar-logo {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo .title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .nav { padding: 12px 8px; flex: 1; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all .15s;
+    user-select: none;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(91,127,255,.13); color: var(--accent); }
+
+  .nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+  .main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+  .topbar {
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .topbar h1 { font-size: 16px; font-weight: 600; }
+
+  .btn {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    transition: all .15s;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #4a6ef0; }
+  .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+
+  .content { padding: 24px 28px; flex: 1; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+
+  /* COLABORADORES LIST */
+  .colab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+
+  .colab-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+  }
+
+  .colab-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  .colab-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .colab-cargo { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  .badge-normal { background: rgba(52,211,153,.15); color: var(--green); }
+  .badge-elevado { background: rgba(251,191,36,.15); color: var(--yellow); }
+  .badge-critico { background: rgba(248,113,113,.15); color: var(--red); }
+
+  .colab-meta { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+
+  /* STATS */
+  .stat-num { font-family: 'DM Serif Display', serif; font-size: 32px; color: var(--text); }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* MODAL / DRAWER */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 100;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .overlay.open { display: flex; }
+
+  .drawer {
+    width: 560px;
+    height: 100vh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 24px;
+    position: relative;
+  }
+
+  .drawer h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .drawer .drawer-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+  .drawer-close {
+    position: absolute;
+    top: 16px; right: 18px;
+    background: none; border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* FORM */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; letter-spacing: .04em; text-transform: uppercase; }
+
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color .15s;
+    resize: vertical;
+  }
+
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--accent);
+  }
+
+  .field textarea { min-height: 80px; }
+
+  .field select option { background: var(--surface2); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+
+  .tab {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all .15s;
+  }
+
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* HISTORICO */
+  .registro {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+
+  .registro-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .registro-data { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+  .registro-body { font-size: 13px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+
+  .tag { display: inline-block; padding: 2px 7px; background: rgba(91,127,255,.15); color: var(--accent); border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; margin-bottom: 4px; }
+
+  /* COMPROMISSOS */
+  .compromisso-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compromisso-item:last-child { border-bottom: none; }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    transition: all .15s;
+  }
+
+  .check-box.checked { background: var(--green); border-color: var(--green); color: #fff; font-size: 11px; }
+  .check-box:hover:not(.checked) { border-color: var(--accent); }
+
+  .compromisso-text { font-size: 13px; flex: 1; line-height: 1.5; }
+  .compromisso-text.done { text-decoration: line-through; color: var(--text-muted); }
+  .compromisso-pessoa { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .compromisso-prazo { font-size: 11px; color: var(--yellow); margin-top: 2px; }
+
+  /* IA PREP */
+  .ia-output {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    min-height: 200px;
+  }
+
+  .ia-thinking { color: var(--text-muted); font-style: italic; }
+
+  /* PAINEL GERAL */
+  .atencao-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .atencao-row:last-child { border-bottom: none; }
+  .atencao-row:hover { opacity: .8; }
+
+  .atencao-nome { font-size: 13px; font-weight: 600; flex: 1; }
+  .atencao-ultimo { font-size: 12px; color: var(--text-muted); }
+
+  /* VAZIO */
+  .empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty .emoji { font-size: 32px; margin-bottom: 10px; }
+  .empty p { font-size: 13px; }
+
+  /* SECTION TITLE */
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .section-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+  /* PILARES */
+  .pilares { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .pilar { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .pilar-title { font-size: 11px; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  .pilar-pergs { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* SEPARATOR */
+  .sep { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  .row { display: flex; align-items: center; gap: 10px; }
+  .row-between { display: flex; align-items: center; justify-content: space-between; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--green);
+    color: #0a2010;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .25s;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* AVATAR */
+  .avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .delete-btn {
+    background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; padding: 2px 5px;
+    border-radius: 4px; transition: all .15s;
+  }
+
+  .delete-btn:hover { color: var(--red); background: rgba(248,113,113,.1); }
+
+  /* AGENDA / CALENDAR */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+
+  .cal-header-day {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 6px 0;
+  }
+
+  .cal-day {
+    min-height: 72px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    position: relative;
+    cursor: default;
+    transition: all .15s;
+  }
+
+  .cal-day.has-events { cursor: pointer; }
+  .cal-day.has-events:hover { border: 1px solid var(--accent); }
+  .cal-day.today { border: 1px solid var(--accent); }
+  .cal-day.other-month { opacity: .35; }
+
+  .cal-day-num {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .cal-day.today .cal-day-num {
+    color: var(--accent);
+  }
+
+  .cal-event-dot {
+    display: block;
+    font-size: 11px;
+    background: rgba(91,127,255,.18);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+  }
+
+  .cal-event-dot.gcal { background: rgba(26,115,232,.18); color: #4a90e2; }
+
+  .reuniao-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: default;
+  }
+
+  .reuniao-item:last-child { border-bottom: none; }
+
+  .reuniao-data-box {
+    min-width: 44px;
+    text-align: center;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 6px 4px;
+  }
+
+  .reuniao-data-box .rd-day { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1; }
+  .reuniao-data-box .rd-mon { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+
+  .reuniao-hora { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .reuniao-actions { display: flex; gap: 6px; margin-left: auto; }
+
+  /* loading spinner */
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin .7s linear infinite; margin-right: 6px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SYNC INDICATOR */
+  .sync-bar {
+    position: fixed; bottom: 0; left: 220px; right: 0;
+    background: rgba(251,191,36,.12);
+    border-top: 1px solid rgba(251,191,36,.3);
+    padding: 7px 20px;
+    font-size: 12px;
+    color: var(--yellow);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    z-index: 50;
+  }
+  .sync-bar.show { display: flex; }
+  .sync-dot { width:7px;height:7px;border-radius:50%;background:var(--yellow);animation:pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* SETUP MODAL */
+  .setup-modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .setup-modal.open { display: flex; }
+  .setup-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 36px;
+    width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .setup-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding: 14px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent);
+  }
+  .setup-step-num {
+    min-width: 24px; height: 24px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+  }
+  .setup-step-body { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+  .setup-step-body a { color: var(--accent); }
+  .setup-step-body strong { color: var(--text); }
+  .setup-status { font-size: 12px; margin-top: 10px; padding: 8px 12px; border-radius: 6px; }
+  .setup-status.ok  { background: rgba(52,211,153,.12); color: var(--green); }
+  .setup-status.err { background: rgba(248,113,113,.12); color: var(--red); }
+
+
+
+  /* LOGIN / PERFIL */
+  .login-screen {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 36px 40px;
+    width: 420px;
+    text-align: center;
+  }
+
+  .login-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+
+  .login-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+
+  .perfil-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .perfil-btn {
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all .18s;
+    text-align: center;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .perfil-btn:hover { border-color: var(--accent); background: rgba(91,127,255,.08); }
+  .perfil-btn.selected { border-color: var(--accent); background: rgba(91,127,255,.13); }
+
+  .perfil-btn .pb-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700;
+    margin: 0 auto 8px;
+  }
+
+  .perfil-btn .pb-nome { font-size: 13px; font-weight: 600; }
+  .perfil-btn .pb-cargo { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .login-sep { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: var(--text-dim); font-size: 12px; }
+  .login-sep::before, .login-sep::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .perfil-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px 3px 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .perfil-badge:hover { border-color: var(--accent); }
+  .perfil-badge .pb-dot { width: 22px; height: 22px; border-radius: 50%; display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700; }
+
+  .acesso-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .acesso-gestor { background: rgba(91,127,255,.15); color: var(--accent); }
+  .acesso-lider  { background: rgba(167,139,250,.15); color: var(--accent2); }
+
+</style>
+</head>
+<body>
+
+<!-- TELA DE LOGIN / SELEÇÃO DE PERFIL -->
+<div class="login-screen" id="login-screen" style="display:flex;">
+  <div class="login-box">
+    <div class="login-title">1:1 Contínuo</div>
+    <div class="login-sub">Gerência de Operações · CSSLOG</div>
+    <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;">Quem é você?</div>
+    <div class="perfil-grid" id="perfil-grid"></div>
+    <button class="btn btn-primary" id="btn-entrar" onclick="entrarComPerfil()" disabled style="width:100%;">Entrar</button>
+  </div>
+</div>
+
+
+<div class="app" id="app-root" style="display:none;">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="title">1:1 Contínuo</div>
+      <div class="sub">Gerência de Operações</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-item active" onclick="showView('painel')" id="nav-painel">
+        <span class="icon">◉</span> Painel
+      </div>
+      <div class="nav-item" onclick="showView('colaboradores')" id="nav-colaboradores">
+        <span class="icon">◈</span> Colaboradores
+      </div>
+      <div class="nav-item" onclick="showView('registros')" id="nav-registros">
+        <span class="icon">◎</span> Registros
+      </div>
+      <div class="nav-item" onclick="showView('compromissos')" id="nav-compromissos">
+        <span class="icon">◇</span> Compromissos
+      </div>
+      <div class="nav-item" onclick="showView('agenda')" id="nav-agenda" data-gestor="true">
+        <span class="icon">◷</span> Agenda
+      </div>
+      <div class="nav-item" onclick="showView('preparar')" id="nav-preparar" data-gestor="true">
+        <span class="icon">✦</span> Preparar com IA
+      </div>
+      <div class="nav-item" onclick="openSetup()" id="nav-setup" data-gestor="true" style="margin-top:4px;color:var(--text-dim);border:1px dashed var(--border);">
+        <span class="icon">⚙</span> Sincronização
+      </div>
+    </nav>
+    <div style="padding: 10px 18px; border-top: 1px solid var(--border);">
+      <div style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">CSSLOG · Gerência de Operações</div>
+      <button onclick="openSetup()" style="width:100%;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text-muted);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">⚙ Sincronização</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- VIEW: PAINEL -->
+    <div id="view-painel">
+      <div class="topbar">
+        <h1>Painel Geral</h1>
+        <button class="btn btn-primary" onclick="openNovoRegistro()">+ Novo Registro</button>
+      </div>
+      <div class="content">
+        <div id="stats-row" class="grid-4" style="margin-bottom:20px;"></div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Nível de Atenção</span>
+            </div>
+            <div id="atencao-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Compromissos em Aberto</span>
+              <span style="font-size:11px;color:var(--text-muted);" id="comp-count"></span>
+            </div>
+            <div id="comp-pendentes-list"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Próximas Reuniões</span><button class="btn btn-ghost btn-sm" onclick="showView('agenda')">Ver agenda →</button></div>
+          <div id="painel-proximas-reunioes"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Últimos Registros</span></div>
+          <div id="ultimos-registros"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: COLABORADORES -->
+    <div id="view-colaboradores" style="display:none;">
+      <div class="topbar">
+        <h1>Colaboradores</h1>
+        <button class="btn btn-primary" onclick="openNovoColab()">+ Adicionar</button>
+      </div>
+      <div class="content">
+        <div id="colab-grid" class="colab-grid"></div>
+      </div>
+    </div>
+
+    <!-- VIEW: REGISTROS -->
+    <div id="view-registros" style="display:none;">
+      <div class="topbar">
+        <h1>Todos os Registros</h1>
+        <div class="row" style="gap:8px;">
+          <select id="filtro-colab" onchange="renderRegistros()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;">
+            <option value="">Todos os colaboradores</option>
+          </select>
+          <button class="btn btn-primary" onclick="openNovoRegistro()">+ Novo Registro</button>
+        </div>
+      </div>
+      <div class="content">
+        <div id="registros-list"></div>
+      </div>
+    </div>
+
+    <!-- VIEW: COMPROMISSOS -->
+    <div id="view-compromissos" style="display:none;">
+      <div class="topbar">
+        <h1>Compromissos</h1>
+      </div>
+      <div class="content">
+        <div class="tabs">
+          <div class="tab active" onclick="setCompTab('pendentes', this)">Em aberto</div>
+          <div class="tab" onclick="setCompTab('concluidos', this)">Concluídos</div>
+        </div>
+        <div id="comp-full-list"></div>
+      </div>
+    </div>
+
+    <!-- VIEW: AGENDA -->
+    <div id="view-agenda" style="display:none;">
+      <div class="topbar">
+        <h1 id="agenda-mes-titulo">Agenda</h1>
+        <div class="row" style="gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="agendaNavMes(-1)">‹ Anterior</button>
+          <button class="btn btn-ghost btn-sm" onclick="agendaNavMes(0)">Hoje</button>
+          <button class="btn btn-ghost btn-sm" onclick="agendaNavMes(1)">Próximo ›</button>
+          <button class="btn btn-primary" onclick="openAgendarReuniao()">+ Agendar 1:1</button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- mini painel de reunioes do mes -->
+        <div id="agenda-stats" class="grid-3" style="margin-bottom:20px;"></div>
+        <!-- calendario -->
+        <div class="card" style="margin-bottom:16px;">
+          <div id="agenda-cal"></div>
+        </div>
+        <!-- lista de proximas reunioes -->
+        <div class="card">
+          <div class="card-header"><span class="card-title" id="agenda-lista-titulo">Reuniões do mês</span></div>
+          <div id="agenda-lista"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: PREPARAR COM IA -->
+    <div id="view-preparar" style="display:none;">
+      <div class="topbar">
+        <h1>Preparar com IA</h1>
+      </div>
+      <div class="content">
+        <p class="section-sub">Selecione um colaborador para gerar automaticamente o contexto do próximo 1:1 com base no histórico registrado.</p>
+
+        <div class="card" style="margin-bottom:16px;">
+          <div class="field" style="margin-bottom:10px;">
+            <label>Colaborador</label>
+            <select id="ia-colab-select" onchange="onIaColabChange()">
+              <option value="">Selecione...</option>
+            </select>
+          </div>
+          <div id="ia-historico-preview" style="display:none;">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;" id="ia-hist-count"></div>
+          </div>
+          <button class="btn btn-primary" onclick="gerarPreparacao()" id="btn-gerar" disabled>✦ Gerar Preparação</button>
+        </div>
+
+        <div id="ia-result-area" style="display:none;">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title" id="ia-result-nome"></span>
+              <button class="btn btn-ghost btn-sm" onclick="copiarIA()">Copiar</button>
+            </div>
+            <div class="ia-output" id="ia-output"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- DRAWER: NOVO COLABORADOR -->
+<div class="overlay" id="overlay-colab" onclick="closeDrawer('overlay-colab')">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <button class="drawer-close" onclick="closeDrawer('overlay-colab')">×</button>
+    <h2 id="colab-drawer-title">Novo Colaborador</h2>
+    <p class="drawer-sub">Preencha os dados básicos.</p>
+
+    <div class="field">
+      <label>Nome</label>
+      <input type="text" id="colab-nome" placeholder="Ex: Adrielle">
+    </div>
+    <div class="field">
+      <label>Cargo</label>
+      <input type="text" id="colab-cargo" placeholder="Ex: Analista de Booking">
+    </div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="colab-tipo">
+        <option value="colaborador">Colaborador</option>
+        <option value="lider">Líder</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Nível Atual</label>
+      <select id="colab-nivel">
+        <option>Estagiário</option>
+        <option>Auxiliar</option>
+        <option>Assistente</option>
+        <option selected>Analista</option>
+        <option>Especialista</option>
+        <option>Líder</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Nível de Atenção</label>
+      <select id="colab-atencao">
+        <option value="Normal">Normal</option>
+        <option value="Elevado">Elevado</option>
+        <option value="Critico">Crítico</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <button class="btn btn-primary" onclick="salvarColab()" style="flex:1;">Salvar</button>
+      <button class="btn btn-ghost" onclick="closeDrawer('overlay-colab')" style="flex:1;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER: NOVO REGISTRO -->
+<div class="overlay" id="overlay-registro" onclick="closeDrawer('overlay-registro')">
+  <div class="drawer" onclick="event.stopPropagation()" style="width:620px;">
+    <button class="drawer-close" onclick="closeDrawer('overlay-registro')">×</button>
+    <h2>Registrar 1:1</h2>
+    <p class="drawer-sub">Preencha após a reunião. Os dados alimentam a preparação com IA.</p>
+
+    <div class="field">
+      <label>Colaborador</label>
+      <select id="reg-colab"></select>
+    </div>
+    <div class="grid-2" style="gap:10px;">
+      <div class="field" style="margin-bottom:0;">
+        <label>Data</label>
+        <input type="date" id="reg-data">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Duração (min)</label>
+        <input type="number" id="reg-duracao" placeholder="45" min="10" max="120">
+      </div>
+    </div>
+
+    <hr class="sep">
+
+    <div class="pilares">
+      <div class="pilar" style="grid-column:1/-1;">
+        <div class="pilar-title">Abertura — Como está?</div>
+        <textarea id="reg-abertura" placeholder="Estado emocional/pessoal, o que marcou a semana..."></textarea>
+      </div>
+      <div class="pilar">
+        <div class="pilar-title">Clientes</div>
+        <textarea id="reg-clientes" placeholder="Clientes atendidos, tensões, elogios, oportunidades..."></textarea>
+      </div>
+      <div class="pilar">
+        <div class="pilar-title">Operação e Processos</div>
+        <textarea id="reg-operacao" placeholder="Desafios, gargalos, indicadores, melhorias identificadas..."></textarea>
+      </div>
+      <div class="pilar">
+        <div class="pilar-title">Roadmap e Desenvolvimento</div>
+        <textarea id="reg-roadmap" placeholder="Aspirações, competências em foco, aprendizados..."></textarea>
+      </div>
+      <div class="pilar" id="pilar-time-wrap">
+        <div class="pilar-title">Time (líder)</div>
+        <textarea id="reg-time" placeholder="Clima, delegação, desenvolvimento de liderados..."></textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Evolução percebida</label>
+      <textarea id="reg-evolucao" placeholder="O que melhorou em relação ao mês anterior?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Desafios atuais</label>
+      <textarea id="reg-desafios" placeholder="O que ainda está travando ou preocupando?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Foco do próximo 1:1</label>
+      <input type="text" id="reg-foco" placeholder="1-2 temas prioritários para o próximo mês">
+    </div>
+
+    <div class="field">
+      <label>Nível de Atenção</label>
+      <select id="reg-atencao">
+        <option value="Normal">Normal</option>
+        <option value="Elevado">Elevado</option>
+        <option value="Critico">Crítico</option>
+      </select>
+    </div>
+
+    <hr class="sep" style="margin:16px 0 12px;">
+    <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Compromissos Assumidos</div>
+
+    <div id="comp-form-list"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addCompForm()" style="margin-top:6px;margin-bottom:16px;">+ Adicionar compromisso</button>
+
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="salvarRegistro()" style="flex:1;">Salvar Registro</button>
+      <button class="btn btn-ghost" onclick="closeDrawer('overlay-registro')" style="flex:1;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER: VER COLABORADOR -->
+<div class="overlay" id="overlay-ver-colab" onclick="closeDrawer('overlay-ver-colab')">
+  <div class="drawer" onclick="event.stopPropagation()" style="width:580px;">
+    <button class="drawer-close" onclick="closeDrawer('overlay-ver-colab')">×</button>
+    <div id="ver-colab-content"></div>
+  </div>
+</div>
+
+<!-- DRAWER: AGENDAR REUNIÃO -->
+<div class="overlay" id="overlay-agendar" onclick="closeDrawer('overlay-agendar')">
+  <div class="drawer" onclick="event.stopPropagation()" style="width:500px;">
+    <button class="drawer-close" onclick="closeDrawer('overlay-agendar')">×</button>
+    <h2 id="agendar-title">Agendar 1:1</h2>
+    <p class="drawer-sub">Configure a reunião e envie para o Google Agenda.</p>
+
+    <div class="field">
+      <label>Colaborador</label>
+      <select id="ag-colab">
+        <option value="">Selecione...</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>E-mail do colaborador <span style="color:var(--text-dim);font-weight:400;">(para convite)</span></label>
+      <input type="email" id="ag-email" placeholder="colaborador@empresa.com.br">
+    </div>
+
+    <div class="grid-2" style="gap:10px;">
+      <div class="field" style="margin-bottom:0;">
+        <label>Data</label>
+        <input type="date" id="ag-data">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Horário de início</label>
+        <input type="time" id="ag-hora" value="09:00">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Duração</label>
+      <select id="ag-duracao">
+        <option value="30">30 minutos</option>
+        <option value="45" selected>45 minutos</option>
+        <option value="50">50 minutos</option>
+        <option value="60">1 hora</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Recorrência</label>
+      <select id="ag-recorrencia">
+        <option value="none">Sem recorrência (reunião única)</option>
+        <option value="monthly">Mensal (mesmo dia todo mês)</option>
+        <option value="biweekly">Quinzenal</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Descrição / Pauta prévia <span style="color:var(--text-dim);font-weight:400;">(opcional)</span></label>
+      <textarea id="ag-descricao" placeholder="Ex: 1:1 mensal — pilares: Abertura, Clientes, Operação, Roadmap e Desenvolvimento."></textarea>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px;">📅 O que vai acontecer</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.7;" id="ag-preview-text">Preencha os campos acima para ver o resumo.</div>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="abrirGoogleCalendar()" style="flex:1;background:#1a73e8;">
+        <span style="margin-right:6px;">📅</span> Abrir no Google Agenda
+      </button>
+      <button class="btn btn-ghost btn-sm" onclick="salvarReuniao()" style="white-space:nowrap;">Salvar só aqui</button>
+    </div>
+    <div style="font-size:11px;color:var(--text-dim);margin-top:8px;text-align:center;">O Google Agenda abrirá com os dados pré-preenchidos. Você confirma o envio do convite lá.</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ===== STORAGE SHIM =====
+// Claude.ai  → window.storage (shared, built-in)
+// Standalone → JSONBin.io   (shared cloud JSON, free)
+// Fallback   → localStorage (single-browser only)
+const Store = (() => {
+  const CLAUDE_KEY  = 'oneone-shared';
+  const POLL_MS     = 9000;
+  const LS_KEY      = 'oneone-local';
+
+  // ── JSONBin config (filled by user in setup screen) ──
+  let _binId   = localStorage.getItem('oneone_bin_id')   || '';
+  let _binKey  = localStorage.getItem('oneone_bin_key')  || '';
+  let _lastEtag = null;
+  let _pollTimer = null;
+
+  const inClaude   = () => typeof window.storage !== 'undefined';
+  const hasBin     = () => _binId && _binKey;
+
+  function configure(binId, binKey) {
+    _binId  = binId.trim();
+    _binKey = binKey.trim();
+    localStorage.setItem('oneone_bin_id',  _binId);
+    localStorage.setItem('oneone_bin_key', _binKey);
+  }
+
+  function getConfig() { return { binId: _binId, binKey: _binKey }; }
+
+  // ── READ ──
+  async function get() {
+    if (inClaude()) {
+      try {
+        const r = await window.storage.get(CLAUDE_KEY, true);
+        return r?.value ? JSON.parse(r.value) : null;
+      } catch { return null; }
+    }
+    if (hasBin()) {
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${_binId}/latest`, {
+          headers: { 'X-Master-Key': _binKey }
+        });
+        if (!res.ok) throw new Error(res.status);
+        _lastEtag = res.headers.get('etag') || null;
+        const json = await res.json();
+        // cache locally for offline fallback
+        localStorage.setItem(LS_KEY, JSON.stringify(json.record));
+        return json.record;
+      } catch(e) {
+        console.warn('JSONBin read failed, using localStorage:', e);
+        const raw = localStorage.getItem(LS_KEY);
+        return raw ? JSON.parse(raw) : null;
+      }
+    }
+    // fallback: localStorage only
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  // ── WRITE ──
+  async function set(data) {
+    // always cache locally first (fast + offline fallback)
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+
+    if (inClaude()) {
+      try { await window.storage.set(CLAUDE_KEY, JSON.stringify(data), true); } catch {}
+      return;
+    }
+    if (hasBin()) {
+      try {
+        await fetch(`https://api.jsonbin.io/v3/b/${_binId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': _binKey
+          },
+          body: JSON.stringify(data)
+        });
+      } catch(e) { console.warn('JSONBin write failed:', e); }
+    } else {
+      // broadcast to other tabs
+      localStorage.setItem(LS_KEY + '_ts', Date.now().toString());
+    }
+  }
+
+  // ── POLLING ──
+  function startPolling(callback) {
+    if (inClaude()) {
+      _pollTimer = setInterval(async () => {
+        const fresh = await get();
+        if (fresh) callback(fresh);
+      }, POLL_MS);
+      return;
+    }
+    if (hasBin()) {
+      _pollTimer = setInterval(async () => {
+        try {
+          const res = await fetch(`https://api.jsonbin.io/v3/b/${_binId}/latest`, {
+            headers: { 'X-Master-Key': _binKey, 'X-Bin-Meta': 'false' }
+          });
+          if (!res.ok) return;
+          const etag = res.headers.get('etag');
+          if (etag && etag === _lastEtag) return; // no change
+          _lastEtag = etag;
+          const json = await res.json();
+          callback(json.record);
+        } catch {}
+      }, POLL_MS);
+      return;
+    }
+    // localStorage events (same browser, other tabs)
+    window.addEventListener('storage', e => {
+      if (e.key === LS_KEY && e.newValue) {
+        try { callback(JSON.parse(e.newValue)); } catch {}
+      }
+    });
+  }
+
+  function stopPolling() {
+    if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
+  }
+
+  function isStandalone() { return !inClaude(); }
+  function isConfigured() { return inClaude() || hasBin(); }
+
+  return { get, set, startPolling, stopPolling, isStandalone, isConfigured, configure, getConfig };
+})();
+
+// ===== PERFIS =====
+const PERFIS = [
+  {
+    id: 'fernanda',
+    nome: 'Fernanda',
+    cargo: 'Gerente de Operações',
+    cor: '#5b7fff',
+    acesso: 'gestor',
+    // gestor vê todos
+    colabsVisiveis: null
+  },
+  {
+    id: 'gabriela',
+    nome: 'Gabriela',
+    cargo: 'Líder de CS',
+    cor: '#a78bfa',
+    acesso: 'lider',
+    // vê Juliana, Larissa e a si mesma
+    colabsVisiveis: ['Juliana','Larissa','Gabriela']
+  },
+  {
+    id: 'larissa',
+    nome: 'Larissa',
+    cargo: 'Sublíder',
+    cor: '#34d399',
+    acesso: 'lider',
+    // vê Thatianne, Vittor, Carla e a si mesma
+    colabsVisiveis: ['Thatianne','Vittor','Carla','Larissa']
+  },
+];
+
+let perfilAtual = null;
+
+function renderLoginScreen() {
+  const grid = document.getElementById('perfil-grid');
+  grid.innerHTML = PERFIS.map(p => `
+    <div class="perfil-btn" id="pb-${p.id}" onclick="selecionarPerfil('${p.id}')">
+      <div class="pb-avatar" style="background:${p.cor}22;color:${p.cor};">${p.nome[0]}</div>
+      <div class="pb-nome">${p.nome}</div>
+      <div class="pb-cargo">${p.cargo}</div>
+    </div>
+  `).join('');
+}
+
+function selecionarPerfil(id) {
+  perfilAtual = PERFIS.find(p=>p.id===id);
+  document.querySelectorAll('.perfil-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('pb-'+id)?.classList.add('selected');
+  document.getElementById('btn-entrar').disabled = false;
+}
+
+function entrarComPerfil() {
+  if (!perfilAtual) return;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-root').style.display = 'flex';
+  renderPerfilBadge();
+  // hide gestor-only nav items for lideres
+  const isLider = perfilAtual.acesso === 'lider';
+  document.querySelectorAll('[data-gestor="true"]').forEach(el => {
+    el.style.display = isLider ? 'none' : '';
+  });
+  showView('painel');
+}
+
+function renderPerfilBadge() {
+  const p = perfilAtual;
+  const el = document.querySelector('.sidebar-logo');
+  // inject badge below logo
+  const existing = document.getElementById('perfil-badge-el');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.id = 'perfil-badge-el';
+  div.style.cssText = 'padding: 8px 18px 14px; border-bottom: 1px solid var(--border);';
+  div.innerHTML = `
+    <div class="perfil-badge" onclick="trocarPerfil()" title="Trocar perfil">
+      <div class="pb-dot" style="background:${p.cor}22;color:${p.cor};">${p.nome[0]}</div>
+      <span>${p.nome}</span>
+      <span class="acesso-tag acesso-${p.acesso}">${p.acesso === 'gestor' ? 'Gestora' : 'Líder'}</span>
+    </div>`;
+  el.parentNode.insertBefore(div, el.nextSibling);
+}
+
+function trocarPerfil() {
+  document.getElementById('login-screen').style.display = 'flex';
+  const badge = document.getElementById('perfil-badge-el');
+  if (badge) badge.remove();
+}
+
+// filtra colaboradores visíveis para o perfil atual
+function colabsVisiveis() {
+  if (!perfilAtual || perfilAtual.acesso === 'gestor') return state.colaboradores;
+  return state.colaboradores.filter(c => perfilAtual.colabsVisiveis?.includes(c.nome));
+}
+
+// ===== STATE =====
+const COLORS = ['#5b7fff','#a78bfa','#34d399','#f97316','#f43f5e','#06b6d4','#eab308','#ec4899','#10b981','#8b5cf6','#3b82f6','#14b8a6'];
+
+let state = {
+  colaboradores: [],
+  registros: [],
+  compromissos: []
+};
+
+// ===== STORAGE (shared=true → sincronizado entre navegadores) =====
+async function loadState() {
+  try {
+    const fresh = await Store.get();
+    if (fresh) state = fresh;
+  } catch(e) {
+    // empty — first load
+  }
+  // seed initial collaborators from document
+  if (state.colaboradores.length === 0) {
+    const nomes = [
+      {nome:'Adrielle', cargo:'Analista de Booking', tipo:'colaborador', nivel:'Analista', atencao:'Elevado'},
+      {nome:'Wagner', cargo:'Analista de Booking', tipo:'colaborador', nivel:'Auxiliar', atencao:'Normal'},
+      {nome:'Kelly', cargo:'Líder de Booking Desk', tipo:'lider', nivel:'Líder', atencao:'Normal'},
+      {nome:'Juliana', cargo:'Analista Documental / CS', tipo:'colaborador', nivel:'Analista', atencao:'Elevado'},
+      {nome:'Gabriela', cargo:'Líder de CS', tipo:'lider', nivel:'Líder', atencao:'Normal'},
+      {nome:'Vittor', cargo:'Analista Documental', tipo:'colaborador', nivel:'Analista', atencao:'Normal'},
+      {nome:'Thatianne', cargo:'Analista de CS', tipo:'colaborador', nivel:'Analista', atencao:'Normal'},
+      {nome:'Carla', cargo:'Assistente Documental', tipo:'colaborador', nivel:'Assistente', atencao:'Normal'},
+      {nome:'Larissa', cargo:'Sublíder de CS', tipo:'lider', nivel:'Líder', atencao:'Normal'},
+    ];
+    state.colaboradores = nomes.map((n,i) => ({...n, id: 'seed'+i, cor: COLORS[i % COLORS.length]}));
+    await saveState();
+  }
+
+  // Seed registros de maio + reuniões de junho se ainda não feito
+  if (!state._seededMaio) {
+    const findId = nome => state.colaboradores.find(c=>c.nome===nome)?.id;
+
+    const regsMaio = [
+      { colabId: findId('Adrielle'), data:'2026-05-20', duracao:'45',
+        abertura: 'Engajada, mas sinalizou que ainda se sente invalidada.',
+        clientes: 'Dúvidas mais técnicas. Sugere melhorar layout e clareza dos e-mails ao cliente.',
+        operacao: 'Muito tempo com bookings sem SI e auxílio ao Wagner. Depende de Allocation e deadline.',
+        roadmap: 'Quer evoluir no processo de transição sales suporte → booking. Sugere atualização do manual, prebooking e análise de incidência.',
+        desafios: 'Ainda se sente invalidada. Precisa de posicionamento. Mensagens automáticas mal usadas.',
+        foco: 'Posicionamento e reconhecimento. Próximo passo concreto no desenvolvimento.',
+        atencao: 'Elevado' },
+      { colabId: findId('Wagner'), data:'2026-05-21', duracao:'45',
+        abertura: 'Em processo de absorção técnica. Motivado com novos armadores.',
+        clientes: 'Dúvidas recorrentes sobre cancelamento — não soube responder ao cliente.',
+        operacao: 'Retrabalho com SI da Maersk. Confusão nos limites entre CS e Pricing.',
+        roadmap: 'Aprendeu booking: Cosco, Maersk, CMA, OOCL. Quer aprender ZIM, Inttra, MSC, Hapag.',
+        desafios: 'Fronteiras de responsabilidade não claras. Processo confuso quando falta info na SI.',
+        foco: 'Clareza de escopo CS x Pricing e próximo bloco técnico.',
+        atencao: 'Normal' },
+      { colabId: findId('Kelly'), data:'2026-05-19', duracao:'50',
+        abertura: 'Focada e com visão sistêmica do problema do BK Desk.',
+        clientes: 'Situações de espaço com Paulinho ainda geram falta de credibilidade. Muita comunicação direta com cliente.',
+        operacao: 'Grupos de e-mail excessivos. Falta de padrão no Pricing — Milena aparenta estar perdida.',
+        roadmap: 'Redesenho do BK Desk em 4 fases. Discussão sobre pessoa focada em Allocation.',
+        desafios: 'Milena sem padrão. Risco de sobrecarga operacional + estruturação simultânea.',
+        foco: 'Avançar Fase 1 do redesenho com prazo e entregável claro.',
+        atencao: 'Normal' },
+      { colabId: findId('Juliana'), data:'2026-05-22', duracao:'45',
+        abertura: 'Prioridades claras, autonomia consolidada.',
+        clientes: 'Questionamentos de deadline constantes. Falha de comunicação entre cliente, sales e vendedor.',
+        operacao: 'Muito tempo em análise de SI. CRM desatualizado.',
+        roadmap: 'Desenvolvimento da Carla evoluindo. Gerencial ainda fora da rotina.',
+        desafios: 'Pendências persistentes: liberação de draft, deadline, prontidão automatizada.',
+        foco: 'Fechar ciclo das pendências. Retomar gerencial na rotina.',
+        atencao: 'Elevado' },
+      { colabId: findId('Gabriela'), data:'2026-05-15', duracao:'50',
+        abertura: 'Engajada com a estruturação do departamento.',
+        clientes: 'Clientes em crescimento: Unity/Karina, Sektor, Reinhart. Reclamações no Inside Sales, não no CS.',
+        operacao: 'Juliana insegura com novos clientes. Larissa com atividades fora do escopo.',
+        roadmap: 'Apresentação do manual CS prevista para junho/26. Levantamento de automações.',
+        desafios: 'PDI não registrado. Larissa com atividades fora do escopo sem decisão.',
+        foco: 'Apresentação do manual CS em junho. Resolver escopo da Larissa.',
+        atencao: 'Normal' },
+      { colabId: findId('Vittor'), data:'2026-05-23', duracao:'45',
+        abertura: 'Alta autonomia. Atenção/concentração em processo de melhora.',
+        clientes: 'Retrabalho com correções Stonex e Mediterrânea.',
+        operacao: 'Volume de e-mail atrapalha rotina. Gargalo de comunicação entre departamentos. WaveBL como novo risco.',
+        roadmap: 'Quer explorar ferramentas tecnológicas. Pretende fazer apresentação para o time.',
+        desafios: 'Apresentação de ferramentas ainda não agendada.',
+        foco: 'Definir data e formato da apresentação de ferramentas.',
+        atencao: 'Normal' },
+      { colabId: findId('Thatianne'), data:'2026-05-20', duracao:'45',
+        abertura: 'Clareza de prioridades. Escala para Larissa quando necessário.',
+        clientes: 'Muito tempo com Stonex. Despachante Cromo e Cargo Control com dificuldade de comunicação.',
+        operacao: 'Dificuldade com Jackeline. Processos fora da normalidade com Canuto. Incoterm gera dúvida.',
+        roadmap: 'Sugeriu automação de cobrança de draft Sektor. Quer resolver planilha Cosco/Stonex com Rafa.',
+        desafios: 'Jackeline sem retorno. Gap técnico em Incoterm. Lista de normalidade não feita.',
+        foco: 'Resolver gap de Incoterm e destravar automação de cobrança.',
+        atencao: 'Normal' },
+      { colabId: findId('Carla'), data:'2026-05-21', duracao:'40',
+        abertura: 'Mais confiante. Percebe avanço na visão do todo.',
+        clientes: 'Pouco contato com cliente. Envia direto pelo site do armador com segurança.',
+        operacao: 'Foco no tracking. Dúvida técnica em ISF. Retrabalho em conferência de draft.',
+        roadmap: 'House/master ainda não claro. Tracking poderia ser automatizado para 38 clientes.',
+        desafios: 'Fluxo house/master não compreendido. Roadmap precisa de ajuste.',
+        foco: 'Fechar gap house/master. Estruturar proposta de automação do tracking.',
+        atencao: 'Normal' },
+      { colabId: findId('Larissa'), data:'2026-05-28', duracao:'45',
+        abertura: 'Primeira conversa estruturada. Motivada com o novo papel de sublíder.',
+        clientes: 'Suporte a Thatianne, Vittor e Carla no atendimento aos clientes. Canuto com processos fora da normalidade.',
+        operacao: 'Atividades de Carla precisam ser melhor delimitadas. Mapeamento de rotina da equipe em andamento.',
+        roadmap: 'Estruturar rotina do time (Thatianne, Vittor, Carla). Desenvolver clareza de escopo para cada membro.',
+        desafios: 'Definir limites claros entre o que é dela e o que escala para a Gabriela. Ainda se apoia muito na operação direta.',
+        foco: 'Delegar com mais consistência. Estruturar rotina semanal do time.',
+        atencao: 'Normal' },
+    ].filter(r => r.colabId);
+
+    regsMaio.forEach((r, i) => { r.id = 'rseed' + i; });
+    state.registros = [...(state.registros || []), ...regsMaio];
+    regsMaio.forEach(r => {
+      const c = state.colaboradores.find(x=>x.id===r.colabId);
+      if (c) c.atencao = r.atencao;
+    });
+
+    const compsMaio = [
+      { colabId: findId('Adrielle'), texto: 'Atualizar manual e material base (layout)', responsavel: 'Adrielle', prazo: '2026-06-30' },
+      { colabId: findId('Adrielle'), texto: 'Mapear atividades de prebooking e análise de incidência booking desk', responsavel: 'Adrielle', prazo: '2026-06-30' },
+      { colabId: findId('Wagner'), texto: 'Levantamento de e-mails do Booking Desk / DraftSPO', responsavel: 'Wagner', prazo: '2026-06-15' },
+      { colabId: findId('Wagner'), texto: 'Estudar processo de cancelamento para responder ao cliente', responsavel: 'Wagner', prazo: '2026-06-30' },
+      { colabId: findId('Kelly'), texto: 'Mapear fluxo atual do BK Desk (Fase 1 — Diagnóstico)', responsavel: 'Kelly', prazo: '2026-06-20' },
+      { colabId: findId('Kelly'), texto: 'Compartilhar planilha semanal com a equipe', responsavel: 'Kelly', prazo: '2026-06-10' },
+      { colabId: findId('Juliana'), texto: 'Fechar liberação de draft e envio de deadline automático', responsavel: 'Juliana', prazo: '2026-06-20' },
+      { colabId: findId('Juliana'), texto: 'Retomar gerencial na rotina semanal', responsavel: 'Juliana', prazo: '2026-06-15' },
+      { colabId: findId('Gabriela'), texto: 'Preparar e apresentar manual CS em junho/26', responsavel: 'Gabriela', prazo: '2026-06-30' },
+      { colabId: findId('Gabriela'), texto: 'Registrar PDI no sistema', responsavel: 'Gabriela', prazo: '2026-06-10' },
+      { colabId: findId('Gabriela'), texto: 'Definir escopo da Larissa e remover atividades fora do seu papel', responsavel: 'Gestora', prazo: '2026-06-15' },
+      { colabId: findId('Vittor'), texto: 'Definir data e fazer apresentação de ferramentas para o time', responsavel: 'Vittor', prazo: '2026-06-30' },
+      { colabId: findId('Vittor'), texto: 'Ver com Vini atualização em massa de atividade no sistema', responsavel: 'Vittor', prazo: '2026-06-15' },
+      { colabId: findId('Thatianne'), texto: 'Fazer lista da normalidade do processo', responsavel: 'Thatianne', prazo: '2026-06-15' },
+      { colabId: findId('Thatianne'), texto: 'Ver com Rafa planilha de correções Cosco/Stonex', responsavel: 'Thatianne', prazo: '2026-06-10' },
+      { colabId: findId('Carla'), texto: 'Trazer 1 problema estruturado para o próximo 1:1', responsavel: 'Carla', prazo: '2026-06-25' },
+      { colabId: findId('Carla'), texto: 'Esclarecer fluxo house/master com Juliana', responsavel: 'Carla', prazo: '2026-06-15' },
+      { colabId: findId('Larissa'), texto: 'Estruturar rotina semanal do time (Thatianne, Vittor, Carla)', responsavel: 'Larissa', prazo: '2026-06-20' },
+      { colabId: findId('Larissa'), texto: 'Definir limites claros de escopo com a Gabriela', responsavel: 'Gestora', prazo: '2026-06-15' },
+    ].filter(c => c.colabId);
+    compsMaio.forEach((c, i) => { c.id = 'cpseed' + i; c.done = false; });
+    state.compromissos = [...(state.compromissos || []), ...compsMaio];
+
+    if (!state.reunioes) state.reunioes = [];
+    const lideresNomes = ['Kelly','Gabriela'];
+    const reunioesSeed = [
+      { colabId: findId('Kelly'),     data:'2026-06-23', hora:'09:00', duracao:'50' },
+      { colabId: findId('Gabriela'),  data:'2026-06-23', hora:'10:00', duracao:'50' },
+      { colabId: findId('Adrielle'),  data:'2026-06-24', hora:'09:00', duracao:'45' },
+      { colabId: findId('Juliana'),   data:'2026-06-24', hora:'10:00', duracao:'45' },
+      { colabId: findId('Vittor'),    data:'2026-06-25', hora:'09:00', duracao:'45' },
+      { colabId: findId('Thatianne'), data:'2026-06-25', hora:'10:00', duracao:'45' },
+      { colabId: findId('Wagner'),    data:'2026-06-26', hora:'09:00', duracao:'45' },
+      { colabId: findId('Carla'),     data:'2026-06-26', hora:'10:00', duracao:'40' },
+      { colabId: findId('Larissa'),   data:'2026-06-27', hora:'09:00', duracao:'45' },
+    ].filter(r => r.colabId);
+
+    reunioesSeed.forEach((r, i) => {
+      r.id = 'agseed' + i;
+      r.recorrencia = 'monthly';
+      r.enviado = false;
+      const nome = state.colaboradores.find(c=>c.id===r.colabId)?.nome || '';
+      const isLider = lideresNomes.includes(nome);
+      r.descricao = `1:1 mensal com ${nome}\n\nPilares: Abertura, Clientes, Operação e Processos, Roadmap e Desenvolvimento${isLider ? ', Time' : ''}.`;
+    });
+    state.reunioes = [...state.reunioes, ...reunioesSeed];
+
+    state._seededMaio = true;
+    await saveState();
+  }
+}
+
+async function saveState() {
+  try {
+    await Store.set(state);
+  } catch(e) {}
+}
+
+// ===== NAV =====
+let currentView = 'painel';
+
+function showView(v) {
+  document.querySelectorAll('[id^="view-"]').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-'+v).style.display = 'flex';
+  document.getElementById('view-'+v).style.flexDirection = 'column';
+  document.getElementById('nav-'+v).classList.add('active');
+  currentView = v;
+  renderView(v);
+}
+
+function renderView(v) {
+  if (v === 'painel') renderPainel();
+  else if (v === 'colaboradores') renderColaboradores();
+  else if (v === 'registros') renderRegistros();
+  else if (v === 'compromissos') renderCompromissos();
+  else if (v === 'agenda') renderAgenda();
+  else if (v === 'preparar') renderPreparar();
+}
+
+// ===== HELPERS =====
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,di] = d.split('-');
+  return `${di}/${m}/${y}`;
+}
+
+function initials(nome) {
+  return nome.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function getColab(id) { return state.colaboradores.find(c=>c.id===id); }
+
+function badgeHtml(nivel) {
+  const cls = nivel === 'Critico' ? 'badge-critico' : nivel === 'Elevado' ? 'badge-elevado' : 'badge-normal';
+  const label = nivel === 'Critico' ? 'Crítico' : nivel;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ===== PAINEL =====
+function renderPainel() {
+  // Stats
+  const total = colabsVisiveis().length;
+  const criticos = colabsVisiveis().filter(c=>c.atencao==='Critico').length;
+  const elevados = colabsVisiveis().filter(c=>c.atencao==='Elevado').length;
+  const compPend = state.compromissos.filter(c=>!c.done).length;
+  const regCount = state.registros.length;
+
+  document.getElementById('stats-row').innerHTML = [
+    { num: total, label: 'Colaboradores' },
+    { num: criticos + elevados, label: 'Em atenção', color: criticos > 0 ? 'var(--red)' : 'var(--yellow)' },
+    { num: compPend, label: 'Compromissos pendentes', color: compPend > 3 ? 'var(--yellow)' : 'var(--text)' },
+    { num: regCount, label: 'Registros totais' },
+  ].map(s => `
+    <div class="card" style="padding:16px 18px;margin-bottom:0;">
+      <div class="stat-num" style="color:${s.color||'var(--text)'};">${s.num}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>
+  `).join('');
+
+  // Atenção list
+  const sorted = [...colabsVisiveis()].sort((a,b) => {
+    const ord = {Critico:0,Elevado:1,Normal:2};
+    return (ord[a.atencao]||2) - (ord[b.atencao]||2);
+  });
+
+  const atencaoList = document.getElementById('atencao-list');
+  if (sorted.length === 0) {
+    atencaoList.innerHTML = '<div class="empty"><p>Nenhum colaborador cadastrado.</p></div>';
+  } else {
+    atencaoList.innerHTML = sorted.map(c => {
+      const lastReg = [...state.registros].filter(r=>r.colabId===c.id).sort((a,b)=>b.data.localeCompare(a.data))[0];
+      return `
+        <div class="atencao-row" onclick="verColab('${c.id}')">
+          <div class="avatar" style="background:${c.cor}20;color:${c.cor};">${initials(c.nome)}</div>
+          <div style="flex:1;">
+            <div class="atencao-nome">${c.nome}</div>
+            <div class="atencao-ultimo">${c.cargo}</div>
+          </div>
+          ${badgeHtml(c.atencao)}
+          <div class="atencao-ultimo">${lastReg ? fmtDate(lastReg.data) : 'Sem registro'}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // Compromissos pendentes
+  const visIds2 = new Set(colabsVisiveis().map(c=>c.id));
+  const pend = state.compromissos.filter(c=>!c.done && visIds2.has(c.colabId)).slice(0,6);
+  const compList = document.getElementById('comp-pendentes-list');
+  document.getElementById('comp-count').textContent = pend.length + ' pendentes';
+  if (pend.length === 0) {
+    compList.innerHTML = '<div class="empty"><p>Nenhum compromisso em aberto.</p></div>';
+  } else {
+    compList.innerHTML = pend.map(cp => {
+      const colab = getColab(cp.colabId);
+      return `
+        <div class="compromisso-item">
+          <div class="check-box${cp.done?' checked':''}" onclick="toggleComp('${cp.id}')">
+            ${cp.done ? '✓' : ''}
+          </div>
+          <div style="flex:1;">
+            <div class="compromisso-text${cp.done?' done':''}">${cp.texto}</div>
+            <div class="compromisso-pessoa">${cp.responsavel || ''} ${colab ? '· '+colab.nome : ''}</div>
+            ${cp.prazo ? `<div class="compromisso-prazo">Prazo: ${fmtDate(cp.prazo)}</div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // Próximas reuniões
+  const hoje2 = new Date(); hoje2.setHours(0,0,0,0);
+  const proxReunioes = [...(state.reunioes||[])]
+    .filter(r => new Date(r.data+'T00:00:00') >= hoje2)
+    .sort((a,b)=>a.data.localeCompare(b.data)||a.hora.localeCompare(b.hora))
+    .slice(0,5);
+  const proxEl = document.getElementById('painel-proximas-reunioes');
+  if (proxReunioes.length === 0) {
+    proxEl.innerHTML = `<div class="empty"><p>Nenhuma reunião agendada. <a href="#" onclick="showView('agenda')" style="color:var(--accent);">Agendar agora.</a></p></div>`;
+  } else {
+    proxEl.innerHTML = proxReunioes.map(r => {
+      const c = getColab(r.colabId);
+      const d = new Date(r.data+'T00:00:00');
+      const [ano,mes,dia] = r.data.split('-');
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);">
+        <div class="avatar" style="background:${c?.cor||'#5b7fff'}20;color:${c?.cor||'#5b7fff'};font-size:12px;">${initials(c?.nome||'?')}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;">${c?.nome||'?'}</div>
+          <div style="font-size:12px;color:var(--text-muted);">${dia}/${mes} às ${r.hora} · ${r.duracao}min</div>
+        </div>
+        ${r.enviado ? '<span style="font-size:11px;color:var(--green);font-weight:600;">✓ Convite enviado</span>' : '<span style="font-size:11px;color:var(--yellow);">Sem convite</span>'}
+      </div>`;
+    }).join('');
+  }
+
+  // Últimos registros
+  const visIdsU = new Set(colabsVisiveis().map(c=>c.id));
+  const ultimos = [...state.registros].filter(r=>visIdsU.has(r.colabId)).sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
+  const ulEl = document.getElementById('ultimos-registros');
+  if (ultimos.length === 0) {
+    ulEl.innerHTML = '<div class="empty"><div class="emoji">📋</div><p>Nenhum registro ainda. <a href="#" onclick="openNovoRegistro()" style="color:var(--accent);">Criar o primeiro.</a></p></div>';
+  } else {
+    ulEl.innerHTML = ultimos.map(r => {
+      const c = getColab(r.colabId);
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div class="avatar" style="background:${c?.cor||'#5b7fff'}20;color:${c?.cor||'#5b7fff'};font-size:12px;">${initials(c?.nome||'?')}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:600;">${c?.nome || '?'}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:1px;">${r.foco || r.abertura?.slice(0,80) || '—'}</div>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);">${fmtDate(r.data)}</div>
+          ${badgeHtml(r.atencao)}
+        </div>`;
+    }).join('');
+  }
+}
+
+// ===== COLABORADORES =====
+function renderColaboradores() {
+  const grid = document.getElementById('colab-grid');
+  if (state.colaboradores.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;"><div class="emoji">👤</div><p>Nenhum colaborador. Clique em "+ Adicionar".</p></div>';
+    return;
+  }
+  grid.innerHTML = colabsVisiveis().map(c => {
+    const regs = state.registros.filter(r=>r.colabId===c.id).length;
+    const lastReg = [...state.registros].filter(r=>r.colabId===c.id).sort((a,b)=>b.data.localeCompare(a.data))[0];
+    return `
+      <div class="colab-card" onclick="verColab('${c.id}')">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div class="avatar" style="background:${c.cor}20;color:${c.cor};">${initials(c.nome)}</div>
+          <div>
+            <div class="colab-name">${c.nome}</div>
+            <div class="colab-cargo">${c.cargo}</div>
+          </div>
+        </div>
+        ${badgeHtml(c.atencao)}
+        <div class="colab-meta" style="margin-top:8px;">${regs} registro${regs!==1?'s':''} · ${lastReg ? 'Último: '+fmtDate(lastReg.data) : 'Sem registro'}</div>
+      </div>`;
+  }).join('');
+}
+
+// ===== VER COLABORADOR =====
+function verColab(id) {
+  const c = getColab(id);
+  if (!c) return;
+  const regs = [...state.registros].filter(r=>r.colabId===id).sort((a,b)=>b.data.localeCompare(a.data));
+  const comps = state.compromissos.filter(cp=>cp.colabId===id);
+  const pendentes = comps.filter(cp=>!cp.done);
+
+  let html = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+      <div class="avatar" style="background:${c.cor}20;color:${c.cor};width:44px;height:44px;font-size:16px;">${initials(c.nome)}</div>
+      <div>
+        <h2 style="margin-bottom:2px;">${c.nome}</h2>
+        <div style="font-size:13px;color:var(--text-muted);">${c.cargo} · ${c.nivel}</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;margin-top:8px;">
+      ${badgeHtml(c.atencao)}
+      <span style="font-size:12px;color:var(--text-muted);">${c.tipo === 'lider' ? '👑 Líder' : 'Colaborador'}</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <button class="btn btn-primary btn-sm" onclick="openNovoRegistroFor('${id}')">+ Registrar 1:1</button>
+      <button class="btn btn-ghost btn-sm" style="color:#4a90e2;border-color:#4a90e2;" onclick="closeDrawer('overlay-ver-colab');openAgendarReuniao('${id}')">📅 Agendar</button>
+      <button class="btn btn-ghost btn-sm" onclick="editColab('${id}')">Editar</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red);" onclick="deleteColab('${id}')">Excluir</button>
+    </div>
+
+    <div class="tabs" id="ver-tabs">
+      <div class="tab active" onclick="setVerTab('historico', this)">Histórico</div>
+      <div class="tab" onclick="setVerTab('compromissos-ver', this)">Compromissos</div>
+    </div>
+
+    <div id="ver-historico">`;
+
+  if (regs.length === 0) {
+    html += '<div class="empty"><p>Nenhum registro ainda.</p></div>';
+  } else {
+    html += regs.map(r => `
+      <div class="registro">
+        <div class="registro-header">
+          <span style="font-size:13px;font-weight:600;">${fmtDate(r.data)} ${r.duracao ? '· '+r.duracao+'min' : ''}</span>
+          <div style="display:flex;gap:6px;align-items:center;">
+            ${badgeHtml(r.atencao)}
+            <button class="delete-btn" onclick="deleteRegistro('${r.id}', '${id}')">🗑</button>
+          </div>
+        </div>
+        ${r.foco ? `<div style="font-size:12px;color:var(--accent);margin-bottom:6px;">Foco: ${r.foco}</div>` : ''}
+        ${renderPilarBloco('Abertura', r.abertura)}
+        ${renderPilarBloco('Clientes', r.clientes)}
+        ${renderPilarBloco('Operação', r.operacao)}
+        ${renderPilarBloco('Roadmap', r.roadmap)}
+        ${c.tipo==='lider' ? renderPilarBloco('Time', r.time) : ''}
+        ${renderPilarBloco('Evolução', r.evolucao)}
+        ${renderPilarBloco('Desafios', r.desafios)}
+      </div>`).join('');
+  }
+
+  html += `</div>
+    <div id="ver-compromissos-ver" style="display:none;">`;
+
+  if (comps.length === 0) {
+    html += '<div class="empty"><p>Nenhum compromisso registrado.</p></div>';
+  } else {
+    html += comps.map(cp => `
+      <div class="compromisso-item">
+        <div class="check-box${cp.done?' checked':''}" onclick="toggleComp('${cp.id}', true, '${id}')">
+          ${cp.done ? '✓' : ''}
+        </div>
+        <div style="flex:1;">
+          <div class="compromisso-text${cp.done?' done':''}">${cp.texto}</div>
+          <div class="compromisso-pessoa">${cp.responsavel || ''}</div>
+          ${cp.prazo ? `<div class="compromisso-prazo">Prazo: ${fmtDate(cp.prazo)}</div>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  html += '</div>';
+
+  document.getElementById('ver-colab-content').innerHTML = html;
+  document.getElementById('overlay-ver-colab').classList.add('open');
+}
+
+function renderPilarBloco(titulo, texto) {
+  if (!texto || texto.trim() === '') return '';
+  return `<div style="margin-bottom:8px;"><span class="tag">${titulo}</span><div class="registro-body" style="margin-top:4px;font-size:12px;">${texto}</div></div>`;
+}
+
+function setVerTab(tab, el) {
+  document.getElementById('ver-historico').style.display = tab === 'historico' ? 'block' : 'none';
+  document.getElementById('ver-compromissos-ver').style.display = tab === 'compromissos-ver' ? 'block' : 'none';
+  document.querySelectorAll('#ver-tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ===== REGISTROS =====
+function renderRegistros() {
+  // populate filter
+  const sel = document.getElementById('filtro-colab');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todos os colaboradores</option>' +
+    colabsVisiveis().map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  sel.value = cur;
+
+  const filtro = sel.value;
+  const visIdsR = new Set(colabsVisiveis().map(c=>c.id));
+  let regs = [...state.registros].filter(r=>visIdsR.has(r.colabId)).sort((a,b)=>b.data.localeCompare(a.data));
+  if (filtro) regs = regs.filter(r=>r.colabId===filtro);
+
+  const el = document.getElementById('registros-list');
+  if (regs.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="emoji">📋</div><p>Nenhum registro encontrado.</p></div>';
+    return;
+  }
+
+  el.innerHTML = regs.map(r => {
+    const c = getColab(r.colabId);
+    return `
+      <div class="card" style="margin-bottom:12px;">
+        <div class="row-between" style="margin-bottom:10px;">
+          <div class="row">
+            <div class="avatar" style="background:${c?.cor||'#5b7fff'}20;color:${c?.cor||'#5b7fff'};font-size:12px;">${initials(c?.nome||'?')}</div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">${c?.nome || '?'}</div>
+              <div style="font-size:12px;color:var(--text-muted);">${fmtDate(r.data)} ${r.duracao?'· '+r.duracao+' min':''}</div>
+            </div>
+          </div>
+          <div class="row">
+            ${badgeHtml(r.atencao)}
+            <button class="delete-btn" onclick="deleteRegistro('${r.id}')">🗑</button>
+          </div>
+        </div>
+        ${r.foco ? `<div style="font-size:12px;color:var(--accent);margin-bottom:8px;">📌 Foco: ${r.foco}</div>` : ''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${renderMiniBloco('Abertura', r.abertura)}
+          ${renderMiniBloco('Clientes', r.clientes)}
+          ${renderMiniBloco('Operação', r.operacao)}
+          ${renderMiniBloco('Roadmap', r.roadmap)}
+          ${renderMiniBloco('Evolução', r.evolucao)}
+          ${renderMiniBloco('Desafios', r.desafios)}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderMiniBloco(titulo, texto) {
+  if (!texto || texto.trim() === '') return '';
+  return `<div style="background:var(--surface2);border-radius:6px;padding:8px 10px;">
+    <div style="font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;">${titulo}</div>
+    <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">${texto.slice(0,120)}${texto.length>120?'...':''}</div>
+  </div>`;
+}
+
+// ===== COMPROMISSOS =====
+let compTab = 'pendentes';
+
+function setCompTab(tab, el) {
+  compTab = tab;
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderCompromissos();
+}
+
+function renderCompromissos() {
+  const visIds = new Set(colabsVisiveis().map(c=>c.id));
+  const lista = (compTab === 'pendentes'
+    ? state.compromissos.filter(c=>!c.done)
+    : state.compromissos.filter(c=>c.done)).filter(c=>visIds.has(c.colabId));
+
+  const el = document.getElementById('comp-full-list');
+  if (lista.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="emoji">${compTab==='pendentes'?'✅':'📭'}</div><p>${compTab==='pendentes'?'Sem compromissos pendentes!':'Nenhum compromisso concluído ainda.'}</p></div>`;
+    return;
+  }
+
+  // group by colab
+  const grouped = {};
+  lista.forEach(cp => {
+    const cid = cp.colabId;
+    if (!grouped[cid]) grouped[cid] = [];
+    grouped[cid].push(cp);
+  });
+
+  el.innerHTML = Object.entries(grouped).map(([cid, comps]) => {
+    const c = getColab(cid);
+    return `
+      <div class="card" style="margin-bottom:12px;">
+        <div class="row" style="margin-bottom:10px;">
+          <div class="avatar" style="background:${c?.cor||'#5b7fff'}20;color:${c?.cor||'#5b7fff'};font-size:12px;">${initials(c?.nome||'?')}</div>
+          <div style="font-size:14px;font-weight:600;">${c?.nome || '?'}</div>
+        </div>
+        ${comps.map(cp=>`
+          <div class="compromisso-item">
+            <div class="check-box${cp.done?' checked':''}" onclick="toggleComp('${cp.id}')">
+              ${cp.done?'✓':''}
+            </div>
+            <div style="flex:1;">
+              <div class="compromisso-text${cp.done?' done':''}">${cp.texto}</div>
+              <div class="compromisso-pessoa">${cp.responsavel || ''}</div>
+              ${cp.prazo ? `<div class="compromisso-prazo">Prazo: ${fmtDate(cp.prazo)}</div>` : ''}
+            </div>
+            <button class="delete-btn" onclick="deleteComp('${cp.id}')">🗑</button>
+          </div>`).join('')}
+      </div>`;
+  }).join('');
+}
+
+// ===== PREPARAR COM IA =====
+function renderPreparar() {
+  const sel = document.getElementById('ia-colab-select');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Selecione...</option>' +
+    colabsVisiveis().map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  sel.value = cur;
+  if (cur) onIaColabChange();
+}
+
+function onIaColabChange() {
+  const id = document.getElementById('ia-colab-select').value;
+  const btn = document.getElementById('btn-gerar');
+  const preview = document.getElementById('ia-historico-preview');
+  if (!id) { btn.disabled = true; preview.style.display='none'; return; }
+  const regs = state.registros.filter(r=>r.colabId===id);
+  btn.disabled = false;
+  preview.style.display = 'block';
+  document.getElementById('ia-hist-count').textContent = `${regs.length} registro(s) encontrado(s) no histórico.`;
+}
+
+async function gerarPreparacao() {
+  const id = document.getElementById('ia-colab-select').value;
+  if (!id) return;
+  const c = getColab(id);
+  const regs = [...state.registros].filter(r=>r.colabId===id).sort((a,b)=>b.data.localeCompare(a.data)).slice(0,3);
+  const comps = state.compromissos.filter(cp=>cp.colabId===id && !cp.done);
+
+  const btn = document.getElementById('btn-gerar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Gerando...';
+
+  const resultArea = document.getElementById('ia-result-area');
+  const output = document.getElementById('ia-output');
+  resultArea.style.display = 'block';
+  document.getElementById('ia-result-nome').textContent = `Preparação — ${c.nome}`;
+  output.innerHTML = '<span class="ia-thinking">Analisando histórico e gerando preparação...</span>';
+
+  let historico = '';
+  if (regs.length === 0) {
+    historico = 'Nenhum registro disponível. Este é o primeiro 1:1 com este colaborador.';
+  } else {
+    historico = regs.map(r => `
+DATA: ${fmtDate(r.data)} | DURAÇÃO: ${r.duracao||'?'} min
+ABERTURA: ${r.abertura||'—'}
+CLIENTES: ${r.clientes||'—'}
+OPERAÇÃO: ${r.operacao||'—'}
+ROADMAP: ${r.roadmap||'—'}
+TIME: ${r.time||'—'}
+EVOLUÇÃO: ${r.evolucao||'—'}
+DESAFIOS: ${r.desafios||'—'}
+FOCO PRÓXIMO 1:1: ${r.foco||'—'}
+NÍVEL DE ATENÇÃO: ${r.atencao}
+---`).join('\n');
+  }
+
+  const compPend = comps.length > 0
+    ? comps.map(cp=>`- ${cp.texto} (${cp.responsavel||'?'}) ${cp.prazo?'| Prazo: '+fmtDate(cp.prazo):''}`).join('\n')
+    : 'Nenhum compromisso pendente registrado.';
+
+  const prompt = `Você é uma assistente de gestão de pessoas. Analise o histórico do 1:1 abaixo e gere uma preparação completa para a próxima reunião.
+
+COLABORADOR: ${c.nome}
+CARGO: ${c.cargo}
+NÍVEL: ${c.nivel}
+TIPO: ${c.tipo === 'lider' ? 'Líder (tem time sob gestão)' : 'Colaborador individual'}
+NÍVEL DE ATENÇÃO ATUAL: ${c.atencao}
+
+HISTÓRICO DOS ÚLTIMOS 1:1s:
+${historico}
+
+COMPROMISSOS PENDENTES:
+${compPend}
+
+Gere para mim:
+
+1. RESUMO DO ÚLTIMO 1:1 (3-5 pontos principais)
+2. COMPROMISSOS PENDENTES (o que ficou em aberto)
+3. EVOLUÇÃO PERCEBIDA (o que melhorou)
+4. PONTOS DE ATENÇÃO (o que ainda não avançou ou preocupa)
+5. 3 PERGUNTAS RECOMENDADAS para aprofundar a conversa
+6. FOCO SUGERIDO para este mês
+
+Seja direta e prática. Use tópicos curtos. Máximo 1 página.`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.map(i=>i.text||'').join('') || 'Erro ao gerar resposta.';
+    output.textContent = text;
+  } catch(e) {
+    output.textContent = 'Erro de conexão. Verifique sua internet e tente novamente.';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✦ Gerar Preparação';
+}
+
+function copiarIA() {
+  const text = document.getElementById('ia-output').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('Copiado para a área de transferência!'));
+}
+
+// ===== DRAWERSI =====
+function openNovoColab() {
+  // reset form
+  ['colab-nome','colab-cargo'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('colab-tipo').value = 'colaborador';
+  document.getElementById('colab-nivel').value = 'Analista';
+  document.getElementById('colab-atencao').value = 'Normal';
+  document.getElementById('colab-drawer-title').textContent = 'Novo Colaborador';
+  document.getElementById('colab-drawer-title')._editId = null;
+  document.getElementById('overlay-colab').classList.add('open');
+}
+
+function editColab(id) {
+  const c = getColab(id);
+  if (!c) return;
+  closeDrawer('overlay-ver-colab');
+  document.getElementById('colab-nome').value = c.nome;
+  document.getElementById('colab-cargo').value = c.cargo;
+  document.getElementById('colab-tipo').value = c.tipo;
+  document.getElementById('colab-nivel').value = c.nivel;
+  document.getElementById('colab-atencao').value = c.atencao;
+  document.getElementById('colab-drawer-title').textContent = 'Editar Colaborador';
+  document.getElementById('colab-drawer-title')._editId = id;
+  document.getElementById('overlay-colab').classList.add('open');
+}
+
+async function salvarColab() {
+  const nome = document.getElementById('colab-nome').value.trim();
+  if (!nome) return;
+  const editId = document.getElementById('colab-drawer-title')._editId;
+  if (editId) {
+    const c = getColab(editId);
+    c.nome = nome;
+    c.cargo = document.getElementById('colab-cargo').value.trim();
+    c.tipo = document.getElementById('colab-tipo').value;
+    c.nivel = document.getElementById('colab-nivel').value;
+    c.atencao = document.getElementById('colab-atencao').value;
+  } else {
+    state.colaboradores.push({
+      id: 'c'+Date.now(),
+      nome,
+      cargo: document.getElementById('colab-cargo').value.trim(),
+      tipo: document.getElementById('colab-tipo').value,
+      nivel: document.getElementById('colab-nivel').value,
+      atencao: document.getElementById('colab-atencao').value,
+      cor: COLORS[state.colaboradores.length % COLORS.length]
+    });
+  }
+  await saveState();
+  closeDrawer('overlay-colab');
+  toast('Colaborador salvo!');
+  renderView(currentView);
+}
+
+async function deleteColab(id) {
+  if (!confirm('Excluir colaborador e todos os seus registros?')) return;
+  state.colaboradores = state.colaboradores.filter(c=>c.id!==id);
+  state.registros = state.registros.filter(r=>r.colabId!==id);
+  state.compromissos = state.compromissos.filter(cp=>cp.colabId!==id);
+  await saveState();
+  closeDrawer('overlay-ver-colab');
+  toast('Colaborador excluído.');
+  renderView(currentView);
+}
+
+// REGISTRO
+let compFormItems = [];
+
+function openNovoRegistro() {
+  openNovoRegistroFor('');
+}
+
+function openNovoRegistroFor(colabId) {
+  closeDrawer('overlay-ver-colab');
+  compFormItems = [];
+
+  // populate select
+  const sel = document.getElementById('reg-colab');
+  sel.innerHTML = state.colaboradores.map(c=>`<option value="${c.id}"${c.id===colabId?' selected':''}>${c.nome}</option>`).join('');
+  if (colabId) sel.value = colabId;
+
+  // set today
+  document.getElementById('reg-data').value = new Date().toISOString().split('T')[0];
+
+  // clear fields
+  ['reg-duracao','reg-abertura','reg-clientes','reg-operacao','reg-roadmap','reg-time','reg-evolucao','reg-desafios','reg-foco'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('reg-atencao').value = 'Normal';
+  document.getElementById('comp-form-list').innerHTML = '';
+
+  document.getElementById('overlay-registro').classList.add('open');
+}
+
+function addCompForm() {
+  const id = 'cf'+Date.now();
+  compFormItems.push(id);
+  const div = document.createElement('div');
+  div.id = id;
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 120px 100px auto;gap:6px;margin-bottom:6px;align-items:center;';
+  div.innerHTML = `
+    <input type="text" placeholder="Descrição do compromisso" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);font-size:12px;font-family:'Inter',sans-serif;outline:none;">
+    <input type="text" placeholder="Responsável" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;color:var(--text);font-size:12px;font-family:'Inter',sans-serif;outline:none;">
+    <input type="date" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 8px;color:var(--text);font-size:12px;font-family:'Inter',sans-serif;outline:none;">
+    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:16px;padding:0 4px;">×</button>
+  `;
+  document.getElementById('comp-form-list').appendChild(div);
+}
+
+async function salvarRegistro() {
+  const colabId = document.getElementById('reg-colab').value;
+  const data = document.getElementById('reg-data').value;
+  if (!colabId || !data) { toast('Selecione colaborador e data.'); return; }
+
+  const reg = {
+    id: 'r'+Date.now(),
+    colabId,
+    data,
+    duracao: document.getElementById('reg-duracao').value,
+    abertura: document.getElementById('reg-abertura').value,
+    clientes: document.getElementById('reg-clientes').value,
+    operacao: document.getElementById('reg-operacao').value,
+    roadmap: document.getElementById('reg-roadmap').value,
+    time: document.getElementById('reg-time').value,
+    evolucao: document.getElementById('reg-evolucao').value,
+    desafios: document.getElementById('reg-desafios').value,
+    foco: document.getElementById('reg-foco').value,
+    atencao: document.getElementById('reg-atencao').value,
+  };
+
+  state.registros.push(reg);
+
+  // update colab atencao
+  const c = getColab(colabId);
+  if (c) c.atencao = reg.atencao;
+
+  // collect compromissos
+  document.querySelectorAll('#comp-form-list > div').forEach(div => {
+    const inputs = div.querySelectorAll('input');
+    const texto = inputs[0].value.trim();
+    if (texto) {
+      state.compromissos.push({
+        id: 'cp'+Date.now()+Math.random(),
+        colabId,
+        registroId: reg.id,
+        texto,
+        responsavel: inputs[1].value.trim(),
+        prazo: inputs[2].value,
+        done: false
+      });
+    }
+  });
+
+  await saveState();
+  closeDrawer('overlay-registro');
+  toast('Registro salvo!');
+  renderView(currentView);
+}
+
+async function deleteRegistro(id, colabId) {
+  if (!confirm('Excluir este registro?')) return;
+  state.registros = state.registros.filter(r=>r.id!==id);
+  await saveState();
+  toast('Registro excluído.');
+  if (colabId) verColab(colabId);
+  else renderView(currentView);
+}
+
+// COMPROMISSOS
+async function toggleComp(id, rerender, colabId) {
+  const cp = state.compromissos.find(c=>c.id===id);
+  if (!cp) return;
+  cp.done = !cp.done;
+  await saveState();
+  if (rerender && colabId) verColab(colabId);
+  else { renderView(currentView); if (currentView==='painel') renderPainel(); }
+}
+
+async function deleteComp(id) {
+  state.compromissos = state.compromissos.filter(c=>c.id!==id);
+  await saveState();
+  renderView(currentView);
+}
+
+function closeDrawer(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ===== AGENDA =====
+let agendaMesAtual = new Date();
+agendaMesAtual.setDate(1);
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_SHORT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+function agendaNavMes(dir) {
+  if (dir === 0) {
+    agendaMesAtual = new Date();
+    agendaMesAtual.setDate(1);
+  } else {
+    agendaMesAtual.setMonth(agendaMesAtual.getMonth() + dir);
+  }
+  renderAgenda();
+}
+
+function renderAgenda() {
+  const ano = agendaMesAtual.getFullYear();
+  const mes = agendaMesAtual.getMonth();
+  document.getElementById('agenda-mes-titulo').textContent = `Agenda — ${MESES[mes]} ${ano}`;
+
+  const reunioesMes = (state.reunioes || []).filter(r => {
+    const d = new Date(r.data + 'T00:00:00');
+    return d.getFullYear() === ano && d.getMonth() === mes;
+  });
+
+  // Stats
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const proximas = reunioesMes.filter(r => new Date(r.data + 'T00:00:00') >= hoje);
+  const realizadas = reunioesMes.filter(r => new Date(r.data + 'T00:00:00') < hoje);
+  const comConvite = reunioesMes.filter(r => r.enviado);
+
+  document.getElementById('agenda-stats').innerHTML = [
+    { num: reunioesMes.length, label: `Reuniões em ${MESES[mes]}` },
+    { num: proximas.length, label: 'Próximas', color: 'var(--accent)' },
+    { num: comConvite.length, label: 'Com convite enviado', color: 'var(--green)' },
+  ].map(s => `
+    <div class="card" style="padding:16px 18px;margin-bottom:0;">
+      <div class="stat-num" style="color:${s.color||'var(--text)'};">${s.num}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>
+  `).join('');
+
+  // Calendar
+  renderCalMes(ano, mes, reunioesMes);
+
+  // Lista
+  document.getElementById('agenda-lista-titulo').textContent = `Reuniões — ${MESES[mes]} ${ano}`;
+  const lista = document.getElementById('agenda-lista');
+  if (reunioesMes.length === 0) {
+    lista.innerHTML = `<div class="empty"><div class="emoji">📅</div><p>Nenhuma reunião agendada para este mês. <a href="#" onclick="openAgendarReuniao()" style="color:var(--accent);">Agendar agora.</a></p></div>`;
+    return;
+  }
+
+  const sorted = [...reunioesMes].sort((a,b) => a.data.localeCompare(b.data) || a.hora.localeCompare(b.hora));
+  lista.innerHTML = sorted.map(r => {
+    const c = getColab(r.colabId);
+    const d = new Date(r.data + 'T00:00:00');
+    const diaSem = DIAS_SEMANA[d.getDay()];
+    const isPast = d < hoje;
+    return `
+      <div class="reuniao-item" style="${isPast ? 'opacity:.55;' : ''}">
+        <div class="reuniao-data-box">
+          <div class="rd-day">${String(d.getDate()).padStart(2,'0')}</div>
+          <div class="rd-mon">${MESES_SHORT[d.getMonth()]}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;">${c?.nome || '?'} <span style="font-size:11px;color:var(--text-dim);font-weight:400;">${diaSem}</span></div>
+          <div class="reuniao-hora">${r.hora} · ${r.duracao} min ${r.email ? '· '+r.email : ''}</div>
+          ${r.descricao ? `<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">${r.descricao.slice(0,80)}${r.descricao.length>80?'...':''}</div>` : ''}
+        </div>
+        <div class="reuniao-actions">
+          ${r.enviado
+            ? `<span style="font-size:11px;color:var(--green);font-weight:600;">✓ Enviado</span>`
+            : `<button class="btn btn-ghost btn-sm" style="color:#4a90e2;border-color:#4a90e2;" onclick="reabrirCalendar('${r.id}')">📅 Reabrir</button>`}
+          <button class="btn btn-ghost btn-sm" onclick="marcarEnviado('${r.id}')">✓</button>
+          <button class="delete-btn" onclick="deleteReuniao('${r.id}')">🗑</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderCalMes(ano, mes, reunioes) {
+  const primeiroDia = new Date(ano, mes, 1).getDay();
+  const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+
+  // build events map
+  const evMap = {};
+  reunioes.forEach(r => {
+    const key = r.data;
+    if (!evMap[key]) evMap[key] = [];
+    evMap[key].push(r);
+  });
+
+  let html = '<div class="cal-grid">';
+  DIAS_SEMANA.forEach(d => { html += `<div class="cal-header-day">${d}</div>`; });
+
+  // empty cells before
+  for (let i = 0; i < primeiroDia; i++) html += '<div class="cal-day other-month"></div>';
+
+  for (let d = 1; d <= diasNoMes; d++) {
+    const dateStr = `${ano}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = new Date(dateStr + 'T00:00:00').getTime() === hoje.getTime();
+    const evs = evMap[dateStr] || [];
+    const hasEv = evs.length > 0;
+
+    html += `<div class="cal-day${isToday?' today':''}${hasEv?' has-events':''}" ${hasEv ? `onclick="filtrarDia('${dateStr}')"` : ''}>
+      <div class="cal-day-num">${d}</div>
+      ${evs.slice(0,2).map(r => {
+        const c = getColab(r.colabId);
+        return `<span class="cal-event-dot${r.enviado?' gcal':''}">${r.hora} ${c?.nome?.split(' ')[0]||'?'}</span>`;
+      }).join('')}
+      ${evs.length > 2 ? `<span style="font-size:10px;color:var(--text-dim);">+${evs.length-2} mais</span>` : ''}
+    </div>`;
+  }
+
+  // fill remaining
+  const total = primeiroDia + diasNoMes;
+  const resto = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for (let i = 0; i < resto; i++) html += '<div class="cal-day other-month"></div>';
+
+  html += '</div>';
+  document.getElementById('agenda-cal').innerHTML = html;
+}
+
+function filtrarDia(dateStr) {
+  const [ano, mes, dia] = dateStr.split('-');
+  const reunioes = (state.reunioes || []).filter(r => r.data === dateStr);
+  if (reunioes.length === 0) return;
+  const lista = document.getElementById('agenda-lista');
+  document.getElementById('agenda-lista-titulo').textContent = `Reuniões em ${dia}/${mes}/${ano}`;
+  const sorted = [...reunioes].sort((a,b)=>a.hora.localeCompare(b.hora));
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  lista.innerHTML = sorted.map(r => {
+    const c = getColab(r.colabId);
+    const d = new Date(r.data + 'T00:00:00');
+    const isPast = d < hoje;
+    return `
+      <div class="reuniao-item" style="${isPast?'opacity:.55;':''}">
+        <div class="reuniao-data-box">
+          <div class="rd-day">${dia}</div>
+          <div class="rd-mon">${MESES_SHORT[parseInt(mes)-1]}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;">${c?.nome||'?'}</div>
+          <div class="reuniao-hora">${r.hora} · ${r.duracao} min ${r.email?'· '+r.email:''}</div>
+        </div>
+        <div class="reuniao-actions">
+          ${r.enviado
+            ? `<span style="font-size:11px;color:var(--green);font-weight:600;">✓ Enviado</span>`
+            : `<button class="btn btn-ghost btn-sm" style="color:#4a90e2;border-color:#4a90e2;" onclick="reabrirCalendar('${r.id}')">📅 Reabrir</button>`}
+          <button class="btn btn-ghost btn-sm" onclick="marcarEnviado('${r.id}')">✓</button>
+          <button class="delete-btn" onclick="deleteReuniao('${r.id}')">🗑</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openAgendarReuniao(colabId) {
+  const sel = document.getElementById('ag-colab');
+  sel.innerHTML = '<option value="">Selecione...</option>' +
+    colabsVisiveis().map(c=>`<option value="${c.id}">${c.nome}</option>`).join('');
+  if (colabId) sel.value = colabId;
+
+  // preencher email se já cadastrado
+  if (colabId) {
+    const c = getColab(colabId);
+    document.getElementById('ag-email').value = c?.email || '';
+  } else {
+    document.getElementById('ag-email').value = '';
+  }
+
+  // default: próximo dia útil
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+  document.getElementById('ag-data').value = d.toISOString().split('T')[0];
+  document.getElementById('ag-hora').value = '09:00';
+  document.getElementById('ag-duracao').value = '45';
+  document.getElementById('ag-recorrencia').value = 'none';
+  document.getElementById('ag-descricao').value = '';
+
+  // live preview
+  ['ag-colab','ag-data','ag-hora','ag-duracao','ag-recorrencia','ag-email'].forEach(id => {
+    document.getElementById(id).addEventListener('change', atualizarPreview);
+    document.getElementById(id).addEventListener('input', atualizarPreview);
+  });
+  atualizarPreview();
+
+  document.getElementById('overlay-agendar').classList.add('open');
+}
+
+function atualizarPreview() {
+  const colabId = document.getElementById('ag-colab').value;
+  const c = colabId ? getColab(colabId) : null;
+  const data = document.getElementById('ag-data').value;
+  const hora = document.getElementById('ag-hora').value;
+  const dur = document.getElementById('ag-duracao').value;
+  const rec = document.getElementById('ag-recorrencia').value;
+  const email = document.getElementById('ag-email').value;
+
+  if (!c || !data || !hora) {
+    document.getElementById('ag-preview-text').textContent = 'Preencha os campos acima para ver o resumo.';
+    return;
+  }
+
+  const [ano,mes,dia] = data.split('-');
+  const horaFim = calcHoraFim(hora, parseInt(dur));
+  const recTxt = rec === 'monthly' ? ' · Mensal' : rec === 'biweekly' ? ' · Quinzenal' : '';
+  const emailTxt = email ? `\nConvite para: ${email}` : '\nSem e-mail de convidado';
+
+  document.getElementById('ag-preview-text').innerHTML =
+    `<strong>1:1 com ${c.nome}</strong><br>${dia}/${mes}/${ano} das ${hora} às ${horaFim}${recTxt}${emailTxt.replace('\n','<br>')}`;
+}
+
+function calcHoraFim(horaInicio, durMin) {
+  const [h, m] = horaInicio.split(':').map(Number);
+  const total = h * 60 + m + durMin;
+  return `${String(Math.floor(total/60)).padStart(2,'0')}:${String(total%60).padStart(2,'0')}`;
+}
+
+function abrirGoogleCalendar() {
+  const colabId = document.getElementById('ag-colab').value;
+  const c = colabId ? getColab(colabId) : null;
+  if (!c) { toast('Selecione um colaborador.'); return; }
+
+  const data = document.getElementById('ag-data').value;
+  const hora = document.getElementById('ag-hora').value;
+  const dur = parseInt(document.getElementById('ag-duracao').value);
+  const email = document.getElementById('ag-email').value.trim();
+  const descricao = document.getElementById('ag-descricao').value.trim() ||
+    `1:1 mensal com ${c.nome}\n\nPilares da reunião:\n• Abertura — Como você está?\n• Clientes\n• Operação e Processos\n• Roadmap e Desenvolvimento${c.tipo==='lider'?'\n• Time':''}\n\nRegistrado via sistema 1:1 Contínuo — Gerência de Operações`;
+  const rec = document.getElementById('ag-recorrencia').value;
+
+  // formato Google Calendar: YYYYMMDDTHHMMSS
+  const [ano, mes, dia] = data.split('-');
+  const [hh, mm] = hora.split(':');
+  const inicio = `${ano}${mes}${dia}T${hh}${mm}00`;
+  const fimMin = parseInt(hh)*60 + parseInt(mm) + dur;
+  const fimH = String(Math.floor(fimMin/60)).padStart(2,'0');
+  const fimM = String(fimMin%60).padStart(2,'0');
+  const fim = `${ano}${mes}${dia}T${fimH}${fimM}00`;
+
+  let url = `https://calendar.google.com/calendar/render?action=TEMPLATE`;
+  url += `&text=${encodeURIComponent(`1:1 — ${c.nome}`)}`;
+  url += `&dates=${inicio}/${fim}`;
+  url += `&details=${encodeURIComponent(descricao)}`;
+  if (email) url += `&add=${encodeURIComponent(email)}`;
+  if (rec === 'monthly') url += `&recur=RRULE:FREQ=MONTHLY`;
+  else if (rec === 'biweekly') url += `&recur=RRULE:FREQ=WEEKLY;INTERVAL=2`;
+
+  window.open(url, '_blank');
+
+  // salvar localmente também
+  salvarReuniao(true);
+  toast('Google Agenda aberto! Confirme o envio do convite lá.');
+}
+
+async function salvarReuniao(enviado = false) {
+  const colabId = document.getElementById('ag-colab').value;
+  if (!colabId) return;
+  const data = document.getElementById('ag-data').value;
+  if (!data) return;
+
+  // save email to colab for future use
+  const email = document.getElementById('ag-email').value.trim();
+  const c = getColab(colabId);
+  if (c && email) c.email = email;
+
+  if (!state.reunioes) state.reunioes = [];
+  state.reunioes.push({
+    id: 'ag'+Date.now(),
+    colabId,
+    data,
+    hora: document.getElementById('ag-hora').value,
+    duracao: document.getElementById('ag-duracao').value,
+    email,
+    descricao: document.getElementById('ag-descricao').value.trim(),
+    recorrencia: document.getElementById('ag-recorrencia').value,
+    enviado,
+    criadoEm: new Date().toISOString()
+  });
+
+  await saveState();
+  closeDrawer('overlay-agendar');
+  if (!enviado) toast('Reunião salva no sistema!');
+  if (currentView === 'agenda') renderAgenda();
+  else if (currentView === 'painel') renderPainel();
+}
+
+async function marcarEnviado(id) {
+  const r = (state.reunioes || []).find(r=>r.id===id);
+  if (r) { r.enviado = !r.enviado; await saveState(); renderAgenda(); }
+}
+
+function reabrirCalendar(id) {
+  const r = (state.reunioes || []).find(r=>r.id===id);
+  if (!r) return;
+  const c = getColab(r.colabId);
+  if (!c) return;
+
+  const [ano,mes,dia] = r.data.split('-');
+  const [hh,mm] = r.hora.split(':');
+  const dur = parseInt(r.duracao);
+  const inicio = `${ano}${mes}${dia}T${hh}${mm}00`;
+  const fimMin = parseInt(hh)*60+parseInt(mm)+dur;
+  const fimH = String(Math.floor(fimMin/60)).padStart(2,'0');
+  const fimM = String(fimMin%60).padStart(2,'0');
+  const fim = `${ano}${mes}${dia}T${fimH}${fimM}00`;
+
+  let url = `https://calendar.google.com/calendar/render?action=TEMPLATE`;
+  url += `&text=${encodeURIComponent(`1:1 — ${c.nome}`)}`;
+  url += `&dates=${inicio}/${fim}`;
+  if (r.email) url += `&add=${encodeURIComponent(r.email)}`;
+  if (r.descricao) url += `&details=${encodeURIComponent(r.descricao)}`;
+  window.open(url, '_blank');
+}
+
+async function deleteReuniao(id) {
+  if (!confirm('Remover esta reunião da agenda?')) return;
+  state.reunioes = (state.reunioes||[]).filter(r=>r.id!==id);
+  await saveState();
+  renderAgenda();
+  toast('Reunião removida.');
+}
+
+
+// ===== SETUP / JSONBIN =====
+function openSetup() {
+  const cfg = Store.getConfig();
+  document.getElementById('setup-bin-id').value = cfg.binId || '';
+  document.getElementById('setup-bin-key').value = cfg.binKey || '';
+  document.getElementById('setup-status-msg').innerHTML = '';
+  document.getElementById('share-url-box').textContent = window.location.href;
+  document.getElementById('setup-modal').classList.add('open');
+}
+
+function closeSetup() {
+  document.getElementById('setup-modal').classList.remove('open');
+}
+
+async function testarEsalvarConfig() {
+  const binId  = document.getElementById('setup-bin-id').value.trim();
+  const binKey = document.getElementById('setup-bin-key').value.trim();
+  if (!binId || !binKey) {
+    showSetupStatus('Preencha os dois campos.', false);
+    return;
+  }
+  const btn = document.getElementById('btn-setup-test');
+  btn.textContent = 'Testando...';
+  btn.disabled = true;
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+      headers: { 'X-Master-Key': binKey }
+    });
+    if (!res.ok) throw new Error('Status ' + res.status);
+    Store.configure(binId, binKey);
+    showSetupStatus('✓ Conexão bem-sucedida! Sincronização ativada.', true);
+    document.getElementById('sync-bar').classList.remove('show');
+    // push current state to bin
+    await Store.set(state);
+    toast('Sincronização configurada!');
+    setTimeout(closeSetup, 1500);
+  } catch(e) {
+    showSetupStatus('Erro: ' + e.message + '. Verifique o Bin ID e a Master Key.', false);
+  }
+  btn.textContent = 'Testar e salvar';
+  btn.disabled = false;
+}
+
+function showSetupStatus(msg, ok) {
+  document.getElementById('setup-status-msg').innerHTML =
+    `<div class="setup-status ${ok?'ok':'err'}">${msg}</div>`;
+}
+
+function copiarUrl() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => toast('URL copiada!'));
+}
+
+// ===== INIT =====
+(async () => {
+  try {
+    await loadState();
+  } catch(e) {
+    console.error('loadState error:', e);
+  }
+  try {
+    renderLoginScreen();
+  } catch(e) {
+    console.error('renderLoginScreen error:', e);
+  }
+
+  // Show standalone warning and start sync polling
+  if (Store.isStandalone() && !Store.isConfigured()) {
+    document.getElementById('sync-bar').classList.add('show');
+  }
+
+  // Poll for remote updates (in Claude.ai, syncs between users)
+  Store.startPolling(fresh => {
+    // Only update if data is newer (more registros/compromissos)
+    const hasMore = fresh.registros?.length > state.registros?.length ||
+                    fresh.compromissos?.length > state.compromissos?.length ||
+                    fresh.reunioes?.length > state.reunioes?.length;
+    if (hasMore) {
+      state = fresh;
+      renderView(currentView);
+      // subtle toast
+      const t = document.getElementById('toast');
+      t.textContent = '🔄 Dados atualizados';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+  });
+})();
+</script>
+
+<div class="sync-bar" id="sync-bar">
+  <div class="sync-dot"></div>
+  <span id="sync-msg">Modo offline — dados locais apenas.</span><button class="btn btn-ghost btn-sm" onclick="openSetup()" style="margin-left:auto;border-color:var(--yellow);color:var(--yellow);">⚙ Configurar sincronização</button>
+</div>
+
+<!-- SETUP MODAL (JSONBin config) -->
+<div class="setup-modal" id="setup-modal">
+  <div class="setup-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <h2 style="font-size:18px;">Configurar sincronização</h2>
+      <button onclick="closeSetup()" style="background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">Configure o JSONBin para sincronizar dados entre todos os computadores. É gratuito e leva 2 minutos.</p>
+
+    <div class="setup-step">
+      <div class="setup-step-num">1</div>
+      <div class="setup-step-body">
+        Acesse <a href="https://jsonbin.io" target="_blank"><strong>jsonbin.io</strong></a> e crie uma conta gratuita.
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">2</div>
+      <div class="setup-step-body">
+        No painel, clique em <strong>"Create Bin"</strong>, cole o JSON abaixo e salve:<br>
+        <code style="display:block;background:var(--bg);border-radius:4px;padding:6px 8px;margin-top:6px;font-size:11px;word-break:break-all;">{}</code>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">3</div>
+      <div class="setup-step-body">
+        Copie o <strong>Bin ID</strong> (aparece na URL: <code>/b/<strong>SEU_ID</strong></code>) e cole abaixo.
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">4</div>
+      <div class="setup-step-body">
+        Vá em <strong>API Keys</strong> no menu lateral, crie uma Master Key e cole abaixo.
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:10px;">
+      <label>Bin ID</label>
+      <input type="text" id="setup-bin-id" placeholder="ex: 64f3a1b2c3d4e5f6a7b8c9d0">
+    </div>
+    <div class="field" style="margin-bottom:16px;">
+      <label>Master Key</label>
+      <input type="password" id="setup-bin-key" placeholder="$2a$10$...">
+    </div>
+
+    <div id="setup-status-msg"></div>
+
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <button class="btn btn-primary" onclick="testarEsalvarConfig()" style="flex:1;" id="btn-setup-test">Testar e salvar</button>
+      <button class="btn btn-ghost" onclick="closeSetup()">Cancelar</button>
+    </div>
+
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">URL para compartilhar</div>
+      <div style="font-size:12px;color:var(--text-muted);background:var(--surface2);border-radius:6px;padding:10px;word-break:break-all;" id="share-url-box">
+        Hospede no GitHub Pages e cole a URL aqui para compartilhar com Gabriela e Larissa.
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="copiarUrl()" style="margin-top:8px;">Copiar URL desta página</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
